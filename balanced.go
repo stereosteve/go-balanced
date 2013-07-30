@@ -3,8 +3,8 @@ package balanced
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -37,8 +37,7 @@ func (c *Client) Url(path string) string {
 
 // Get
 func (c *Client) Get(path string, v interface{}) error {
-	var args interface{}
-	return c.Do("GET", path, args, v)
+	return c.Do("GET", path, nil, v)
 }
 
 // Post
@@ -53,31 +52,25 @@ func (c *Client) Put(path string, args interface{}, v interface{}) error {
 
 // Delete
 func (c *Client) Delete(path string) error {
-	req, err := http.NewRequest("DELETE", c.Url(path), nil)
-	if err != nil {
-		return err
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode >= 400 {
-		return errors.New(resp.Status)
-	}
-	return nil
+	return c.Do("DELETE", path, nil, nil)
 }
 
 // Do
 func (c *Client) Do(method string, path string, args interface{}, v interface{}) error {
 
+	var body io.Reader
+
 	// encode json
-	body, err := json.Marshal(args)
-	if err != nil {
-		return err
+	if args != nil {
+		args, err := json.Marshal(args)
+		if err != nil {
+			return err
+		}
+		body = bytes.NewReader(args)
 	}
 
 	// construct request
-	req, err := http.NewRequest(method, c.Url(path), bytes.NewReader(body))
+	req, err := http.NewRequest(method, c.Url(path), body)
 	if err != nil {
 		return err
 	}
@@ -98,12 +91,11 @@ func (c *Client) Do(method string, path string, args interface{}, v interface{})
 		return &balancedError
 	}
 
-	// decode response
-	if err = decoder.Decode(&v); err != nil {
-		return err
+	if v != nil {
+		err = decoder.Decode(&v)
 	}
 
-	return nil
+	return err
 }
 
 type Customer struct {
