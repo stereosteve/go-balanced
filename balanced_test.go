@@ -2,59 +2,59 @@ package balanced
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 )
 
-var c *Client
-var customer *Customer
+func TestNewClient(t *testing.T) {
+	c := NewClient(nil, "")
 
-func TestUrl(t *testing.T) {
-	c = &Client{"9a946c52e98011e282f9026ba7d31e6f"}
-	in := "/path"
-	out := c.Url(in)
-	want := "https://9a946c52e98011e282f9026ba7d31e6f:@api.balancedpayments.com/path"
-	if out != want {
-		t.Errorf("Url(%s) = %s, \n want %s", in, out, want)
+	if c.BaseURL.String() != defaultBaseURL {
+		t.Errorf("NewClient BaseURL = %v, want %v", c.BaseURL.String(), defaultBaseURL)
+	}
+	if c.UserAgent != userAgent {
+		t.Errorf("NewClient UserAgent = %v, want %v", c.UserAgent, userAgent)
+	}
+}
+
+func TestNewRequest(t *testing.T) {
+	c := NewClient(nil, "")
+
+	inURL, outURL := "/foo", defaultBaseURL+"foo"
+	inBody, outBody := &Customer{Name: "l"}, `{"name":"l"}`+"\n"
+	req, _ := c.NewRequest("GET", inURL, inBody)
+
+	// test that relative URL was expanded
+	if req.URL.String() != outURL {
+		t.Errorf("NewRequest(%v) URL = %v, want %v", inURL, req.URL, outURL)
+	}
+
+	// test that body was JSON encoded
+	body, _ := ioutil.ReadAll(req.Body)
+	if string(body) != outBody {
+		t.Errorf("NewRequest(%v) Body = %v, want %v", inBody, string(body), outBody)
+	}
+
+	// test that default user-agent is attached to the request
+	userAgent := req.Header.Get("User-Agent")
+	if c.UserAgent != userAgent {
+		t.Errorf("NewRequest() User-Agent = %v, want %v", userAgent, c.UserAgent)
 	}
 }
 
 func TestCreateCustomer(t *testing.T) {
-	args := map[string]interface{}{
-		"name":  "gopher",
-		"phone": "123-456-7890",
-	}
-	err := c.Post("/v1/customers", &args, &customer)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(customer)
-}
+	c := NewClient(nil, "9a946c52e98011e282f9026ba7d31e6f")
+	u := "/v1/customers"
+	inBody := &Customer{Name: "Go Balanced"}
 
-func TestGetCustomer(t *testing.T) {
-	var c2 map[string]interface{}
-	err := c.Get(customer.Uri, &c2)
-	if err != nil {
-		panic(err)
-	}
-	if customer.Id != c2["id"] {
-		t.Errorf("Customer ids not equal %s, %s", customer.Id, c2["id"])
-	}
-}
+	req, _ := c.NewRequest("POST", u, inBody)
+	cust := new(Customer)
+	resp, err := c.Do(req, cust)
 
-func TestUpdateCustomer(t *testing.T) {
-	args := map[string]interface{}{
-		"name": "Updated Gopher",
-	}
-	err := c.Put(customer.Uri, &args, &customer)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
-	fmt.Println(customer)
-}
 
-func TestDeleteCustomer(t *testing.T) {
-	err := c.Delete(customer.Uri)
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println(resp.StatusCode)
+	fmt.Println(cust)
 }
