@@ -121,6 +121,13 @@ func CheckResponse(r *http.Response) error {
 	return errorResponse
 }
 
+type Page struct {
+	Uri     string        `json:"uri,omitempty"`
+	NextURI string        `json:"next_uri",omitempty"`
+	LastURI string        `json:"last_uri",omitempty"`
+	Items   []interface{} `json:"items",omitempty"`
+}
+
 /*
 Customer represents a Balanced Customer
 */
@@ -149,4 +156,3 @@ type Debit struct {
 	Status             string
 	Transaction_number string
 }
-

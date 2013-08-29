@@ -43,6 +43,8 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestCreateCustomer(t *testing.T) {
+	t.SkipNow()
+
 	c := NewClient(nil, "9a946c52e98011e282f9026ba7d31e6f")
 	u := "/v1/customers"
 	inBody := &Customer{Name: "Go Balanced"}
@@ -55,6 +57,25 @@ func TestCreateCustomer(t *testing.T) {
 		fmt.Println(err)
 	}
 
+	if resp.StatusCode != 201 {
+		t.Errorf("Expected 201, got %v", resp.StatusCode)
+	}
 	fmt.Println(resp.StatusCode)
 	fmt.Println(cust)
+}
+
+func TestListCustomers(t *testing.T) {
+	c := NewClient(nil, "9a946c52e98011e282f9026ba7d31e6f")
+	u := "/v1/customers"
+
+	req, _ := c.NewRequest("GET", u, nil)
+	page := new(Page)
+	resp, err := c.Do(req, page)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(resp.StatusCode)
+	fmt.Println(page)
 }
