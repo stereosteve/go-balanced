@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+const secret = "d0342b8a10e611e3adaf026ba7d31e6f"
+
 func TestNewClient(t *testing.T) {
 	c := NewClient(nil, "")
 
@@ -43,9 +45,9 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestCreateCustomer(t *testing.T) {
-	t.SkipNow()
+	// t.SkipNow()
 
-	c := NewClient(nil, "9a946c52e98011e282f9026ba7d31e6f")
+	c := NewClient(nil, secret)
 	u := "/v1/customers"
 	inBody := &Customer{Name: "Go Balanced"}
 
@@ -65,23 +67,12 @@ func TestCreateCustomer(t *testing.T) {
 }
 
 func TestListCustomers(t *testing.T) {
-	c := NewClient(nil, "9a946c52e98011e282f9026ba7d31e6f")
-	u := "/v1/customers"
+	c := NewClient(nil, secret)
 
-	req, _ := c.NewRequest("GET", u, nil)
-	page := new(Page)
-	resp, err := c.Do(req, page)
-
+	customers, err := c.Customers.List()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	customers := []Customer{}
-	err = page.CastItems(&customers)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(resp.StatusCode)
 	fmt.Println(customers)
 }

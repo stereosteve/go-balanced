@@ -21,6 +21,8 @@ type Client struct {
 	BaseURL   *url.URL
 	UserAgent string
 	Secret    string
+
+	Customers *CustomerService
 }
 
 // NewClient returns a new Balanced API client.  If nil httpClient is provided
@@ -32,6 +34,9 @@ func NewClient(httpClient *http.Client, secret string) *Client {
 	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent, Secret: secret}
+
+	c.Customers = &CustomerService{client: c}
+
 	return c
 }
 
@@ -137,15 +142,7 @@ func (p *Page) CastItems(v interface{}) error {
 	return err
 }
 
-/*
-Customer represents a Balanced Customer
-*/
-type Customer struct {
-	Id    string `json:"id,omitempty"`
-	Uri   string `json:"uri,omitempty"`
-	Name  string `json:"name,omitempty"`
-	Phone string `json:"phone,omitempty"`
-}
+
 
 /*
 BankAccount
