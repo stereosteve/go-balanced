@@ -125,14 +125,14 @@ func CheckResponse(r *http.Response) error {
 Page has items and links to other pages
 */
 type Page struct {
-	Uri     string        `json:"uri,omitempty"`
-	NextURI string        `json:"next_uri",omitempty"`
-	LastURI string        `json:"last_uri",omitempty"`
+	Uri     string          `json:"uri,omitempty"`
+	NextURI string          `json:"next_uri",omitempty"`
+	LastURI string          `json:"last_uri",omitempty"`
 	Items   json.RawMessage `json:"items",omitempty"`
 }
 
 // casts Items RawMessage to a desired type
-func (p *Page) CastItems (v interface{}) error {
+func (p *Page) CastItems(v interface{}) error {
 	err := json.Unmarshal(p.Items, &v)
 	return err
 }
