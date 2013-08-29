@@ -131,15 +131,24 @@ Page has items and links to other pages
 */
 type Page struct {
 	Uri     string          `json:"uri,omitempty"`
-	NextURI string          `json:"next_uri",omitempty"`
-	LastURI string          `json:"last_uri",omitempty"`
-	Items   json.RawMessage `json:"items",omitempty"`
+	NextURI string          `json:"next_uri,omitempty"`
+	LastURI string          `json:"last_uri,omitempty"`
+	Limit   int             `json:"limit"`
+	Offset  int             `json:"offset"`
+	Total   int             `json:"total"`
+	Items   json.RawMessage `json:"items,omitempty"`
 }
 
 // casts Items RawMessage to a desired type
 func (p *Page) CastItems(v interface{}) error {
 	err := json.Unmarshal(p.Items, &v)
 	return err
+}
+
+type ListOptions struct {
+	Limit  int
+	Offset int
+	Uri    string
 }
 
 /*

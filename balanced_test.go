@@ -69,10 +69,12 @@ func TestCreateCustomer(t *testing.T) {
 func TestListCustomers(t *testing.T) {
 	c := NewClient(nil, secret)
 
-	customers, err := c.Customers.List()
+	opts := &ListOptions{Limit: 2, Offset: 1, Uri: "/v1/customers?limit=1"}
+	customers, page, err := c.Customers.List(opts)
 	if err != nil {
-		fmt.Println(err)
+		t.Fatal(err)
 	}
 
+	fmt.Println(page.Total)
 	fmt.Println(customers)
 }
