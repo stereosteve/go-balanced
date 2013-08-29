@@ -76,6 +76,12 @@ func TestListCustomers(t *testing.T) {
 		fmt.Println(err)
 	}
 
+	customers := []Customer{}
+	err = page.CastItems(&customers)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	fmt.Println(resp.StatusCode)
-	fmt.Println(page)
+	fmt.Println(customers)
 }
