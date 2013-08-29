@@ -142,8 +142,6 @@ func (p *Page) CastItems(v interface{}) error {
 	return err
 }
 
-
-
 /*
 BankAccount
 */
