@@ -42,4 +42,3 @@ func TestNewRequest(t *testing.T) {
 		t.Errorf("NewRequest() User-Agent = %v, want %v", userAgent, c.UserAgent)
 	}
 }
-

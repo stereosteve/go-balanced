@@ -150,22 +150,3 @@ type ListOptions struct {
 	Offset int
 	Uri    string
 }
-
-/*
-BankAccount
-*/
-type BankAccount struct {
-	Uri         string
-	Credits_uri string
-	Bank_name   string
-	Can_debit   bool
-}
-
-/*
-Debit
-*/
-type Debit struct {
-	Uri                string
-	Status             string
-	Transaction_number string
-}
