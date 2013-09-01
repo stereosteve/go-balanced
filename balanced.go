@@ -22,7 +22,8 @@ type Client struct {
 	UserAgent string
 	Secret    string
 
-	Customers *CustomerService
+	Customers    *CustomerService
+	BankAccounts *BankAccountService
 }
 
 // NewClient returns a new Balanced API client.  If nil httpClient is provided
@@ -36,6 +37,7 @@ func NewClient(httpClient *http.Client, secret string) *Client {
 	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent, Secret: secret}
 
 	c.Customers = &CustomerService{client: c}
+	c.BankAccounts = &BankAccountService{client: c}
 
 	return c
 }

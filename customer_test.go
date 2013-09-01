@@ -6,6 +6,7 @@ import (
 )
 
 func TestCreateCustomer(t *testing.T) {
+	t.SkipNow()
 	c := NewClient(nil, secret)
 	inBody := &Customer{Name: "Go Balanced"}
 
@@ -19,6 +20,7 @@ func TestCreateCustomer(t *testing.T) {
 }
 
 func TestListCustomers(t *testing.T) {
+	t.SkipNow()
 	c := NewClient(nil, secret)
 
 	opts := &ListOptions{Limit: 2, Offset: 1, Uri: "/v1/customers?limit=1"}
