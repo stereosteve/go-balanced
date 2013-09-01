@@ -49,3 +49,17 @@ func (s *CustomerService) List(opt *ListOptions) ([]Customer, *Page, error) {
 
 	return customers, page, nil
 }
+
+func (s *CustomerService) Create(customer *Customer) (*Customer, error) {
+	u := "/v1/customers"
+	req, err := s.client.NewRequest("POST", u, customer)
+	if err != nil {
+		return nil, err
+	}
+	c := new(Customer)
+	_, err = s.client.Do(req, c)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}

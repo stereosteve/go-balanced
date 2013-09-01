@@ -1,7 +1,6 @@
 package balanced
 
 import (
-	"fmt"
 	"io/ioutil"
 	"testing"
 )
@@ -44,37 +43,3 @@ func TestNewRequest(t *testing.T) {
 	}
 }
 
-func TestCreateCustomer(t *testing.T) {
-	// t.SkipNow()
-
-	c := NewClient(nil, secret)
-	u := "/v1/customers"
-	inBody := &Customer{Name: "Go Balanced"}
-
-	req, _ := c.NewRequest("POST", u, inBody)
-	cust := new(Customer)
-	resp, err := c.Do(req, cust)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	if resp.StatusCode != 201 {
-		t.Errorf("Expected 201, got %v", resp.StatusCode)
-	}
-	fmt.Println(resp.StatusCode)
-	fmt.Println(cust)
-}
-
-func TestListCustomers(t *testing.T) {
-	c := NewClient(nil, secret)
-
-	opts := &ListOptions{Limit: 2, Offset: 1, Uri: "/v1/customers?limit=1"}
-	customers, page, err := c.Customers.List(opts)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	fmt.Println(page.Total)
-	fmt.Println(customers)
-}
