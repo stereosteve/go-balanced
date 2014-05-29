@@ -13,6 +13,7 @@ type Customer struct {
 	Uri   string `json:"uri,omitempty"`
 	Name  string `json:"name,omitempty"`
 	Phone string `json:"phone,omitempty"`
+	Email string `json:"email,omitempty"`
 }
 
 type CustomerService struct {
@@ -53,6 +54,38 @@ func (s *CustomerService) List(opt *ListOptions) ([]Customer, *Page, error) {
 func (s *CustomerService) Create(customer *Customer) (*Customer, error) {
 	u := "/v1/customers"
 	req, err := s.client.NewRequest("POST", u, customer)
+	if err != nil {
+		return nil, err
+	}
+	c := new(Customer)
+	_, err = s.client.Do(req, c)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+func (s *CustomerService) AddBankAccount(customer *Customer, bankUri string) (*Customer, error) {
+	data := struct {
+		BankAccountUri string `json:"bank_account_uri"`
+	}{bankUri}
+	req, err := s.client.NewRequest("PUT", customer.Uri, data)
+	if err != nil {
+		return nil, err
+	}
+	c := new(Customer)
+	_, err = s.client.Do(req, c)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+func (s *CustomerService) AddCard(customer *Customer, cardUri string) (*Customer, error) {
+	data := struct {
+		CardUri string `json:"card_uri"`
+	}{cardUri}
+	req, err := s.client.NewRequest("PUT", customer.Uri, data)
 	if err != nil {
 		return nil, err
 	}
