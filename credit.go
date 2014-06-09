@@ -1,7 +1,5 @@
 package balanced
 
-import "fmt"
-
 /*
 Credit
 */
@@ -16,7 +14,7 @@ type CreditService struct {
 }
 
 func (s *CreditService) CreateForCustomer(customer *Customer, credit *Credit) (*Credit, error) {
-	u := fmt.Sprintf("%s/credits", customer.Uri)
+	u := customer.Uri + "/credits"
 	req, err := s.client.NewRequest("POST", u, credit)
 	if err != nil {
 		return nil, err

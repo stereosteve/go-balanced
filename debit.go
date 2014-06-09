@@ -1,7 +1,5 @@
 package balanced
 
-import "fmt"
-
 /*
 Debit
 */
@@ -17,7 +15,7 @@ type DebitService struct {
 }
 
 func (s *DebitService) Create(customer *Customer, debit *Debit) (*Debit, error) {
-	u := fmt.Sprintf("%s/debits", customer.Uri)
+	u := customer.Uri + "/debits"
 	req, err := s.client.NewRequest("POST", u, debit)
 	if err != nil {
 		return nil, err
